@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import MapView from "react-native-maps";
 import { StyleSheet, View, Dimensions, Text } from "react-native";
+import { getAllCrimesForLocation } from "../api";
 
 export default class Map extends Component {
   state = {
@@ -8,6 +9,7 @@ export default class Map extends Component {
       latitude: 0,
       longitude: 0,
     },
+    numberOfNearbyCrimes: 0,
   };
 
   getCurrentPosition = () => {
@@ -22,20 +24,34 @@ export default class Map extends Component {
     });
   };
 
-  render() {
+  getNumberOfCrimes = async () => {
     const { location } = this.state;
+    const { latitude, longitude } = location;
+    const numberOfNearbyCrimes = await getAllCrimesForLocation(
+      latitude,
+      longitude
+    );
+    this.setState({ numberOfNearbyCrimes });
+  };
+
+  render() {
+    const { location, numberOfNearbyCrimes } = this.state;
     const { latitude, longitude } = location;
     return (
       <View style={styles.container}>
         <MapView
           style={styles.mapStyle}
-          onUserLocationChange={this.getCurrentPosition}
+          onUserLocationChange={() => {
+            this.getCurrentPosition();
+            this.getNumberOfCrimes();
+          }}
           showsUserLocation={true}
           followsUserLocation={true}
         />
         <View style={styles.textStyle}>
           <Text>{`lat: ${latitude}`}</Text>
           <Text>{`long: ${longitude}`}</Text>
+          <Text>{`crimes within 1 mile: ${numberOfNearbyCrimes}`}</Text>
         </View>
       </View>
     );
