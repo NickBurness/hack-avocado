@@ -1,4 +1,4 @@
-const baseUrl = "https://data.police.uk/api/";
+const baseUrl = "https://data.police.uk/api";
 
 // Gets all crimes within 1 mile of location
 export const getAllCrimesForLocation = async (latitude, longitude) => {

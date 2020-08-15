@@ -20,7 +20,7 @@ export default class Map extends Component {
         latitude: latitude,
         longitude: longitude,
       };
-      if (location !== null) this.setState({ location });
+      this.setState({ location });
     });
   };
 
