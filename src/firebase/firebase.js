@@ -8,17 +8,17 @@ import "firebase/database";
 //import "firebase/functions";
 //import "firebase/storage";
 
-const { apiKey, authDomain, projectId } = secrets;
+const { apiKey, authDomain, projectId, databaseUrl } = secrets;
 
 // Initialize Firebase
 const firebaseConfig = {
   apiKey: apiKey,
   authDomain: authDomain,
   projectId: projectId,
-  // databaseURL: "https://project-id.firebaseio.com",
+  databaseURL: databaseUrl,
 };
 
 export default firebase;
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
 export const firebaseAuth = firebaseApp.auth();
-// export const firebaseDb = firebaseApp.database().ref();
+export const firebaseDb = firebaseApp.database();

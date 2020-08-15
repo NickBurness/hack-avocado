@@ -1,26 +1,63 @@
-import React from "react";
+import React, { Component } from "react";
 import { Button, View, StyleSheet, Text } from "react-native";
-import { firebaseAuth } from "../firebase/firebase";
+import { firebaseAuth, firebaseDb } from "../firebase/firebase";
 
-const Home = ({ navigation }) => {
-  const { replace, navigate } = navigation;
-  const currentUser = firebaseAuth.currentUser;
+export default class Home extends Component {
+  state = {
+    count: 0,
+  };
 
-  const logout = () => {
+  componentDidMount = () => {
+    const currentUser = firebaseAuth.currentUser;
+    const dbReference = firebaseDb.ref(`users/${currentUser.uid}/`);
+
+    dbReference.once("value", (snapshot) => {
+      if (snapshot.hasChild("username")) {
+        dbReference.child("number").once("value", (snapshot) => {
+          this.setState({ count: snapshot.val() });
+        });
+      } else {
+        dbReference.set({
+          username: currentUser.email,
+          number: 0,
+        });
+      }
+    });
+  };
+
+  logout = () => {
+    const { replace } = this.props.navigation;
     firebaseAuth.signOut();
     replace("Login");
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.welcomeContainer}>
-        <Text style={styles.welcome}>{`Hello ${currentUser.email}`}</Text>
-        <Button title="Logout" style={styles.input} onPress={logout} />
+  incrementDatabase = () => {
+    const currentUser = firebaseAuth.currentUser;
+    const { count } = this.state;
+    const newCount = count + 1;
+    this.setState({ count: newCount }, () => {
+      firebaseDb.ref(`users/${currentUser.uid}`).update({ number: newCount });
+    });
+  };
+
+  render() {
+    const { navigate } = this.props.navigation;
+    const { count } = this.state;
+    const currentUser = firebaseAuth.currentUser;
+
+    return (
+      <View style={styles.container}>
+        <View style={styles.welcomeContainer}>
+          <Text style={styles.welcome}>{`Hello ${currentUser.email}`}</Text>
+          <Button title="Logout" onPress={this.logout} />
+          <Button title="Press me" onPress={this.incrementDatabase} />
+          <Text>{`You have pressed me ${count} times`}</Text>
+        </View>
+        <Button title="Go to crime map" onPress={() => navigate("Map")} />
       </View>
-      <Button title="Go to crime map" onPress={() => navigate("Map")} />
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -34,5 +71,3 @@ const styles = StyleSheet.create({
   },
   welcome: { fontSize: 22 },
 });
-
-export default Home;
