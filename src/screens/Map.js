@@ -13,6 +13,12 @@ import {
   getAllCrimesForLocation,
   getAllCrimesForLocationFullDetails,
 } from "../api";
+import police from "../assets/police.png";
+import fire from "../assets/fire.png";
+import bike from "../assets/bike.png";
+import violence from "../assets/violence.png";
+import fight from "../assets/fight.png";
+import thief from "../assets/thief.png";
 
 export default class Map extends Component {
   state = {
@@ -101,7 +107,36 @@ export default class Map extends Component {
           followsUserLocation={true}
         >
           {this.state.crimes.map((crime) => {
-            if (crime)
+            if (crime) {
+              let categoryEmoji = "";
+              let image;
+              switch (crime.category) {
+                case "violent-crime":
+                  categoryEmoji = "🔪";
+                  image = violence;
+                  break;
+                case "anti-social-behaviour":
+                  categoryEmoji = "🍻";
+                  image = fight;
+                  break;
+                case "criminal-damage-arson":
+                  categoryEmoji = "🔥";
+                  image = fire;
+                  break;
+                case "bicycle-theft":
+                  categoryEmoji = "🚲";
+                  image = bike;
+                  break;
+                case "burglary":
+                  categoryEmoji = "🏃‍♂️";
+                  image = thief;
+                  break;
+                default:
+                  categoryEmoji = "🚨";
+                  image = police;
+                  break;
+              }
+
               return (
                 <Marker
                   key={crime.id}
@@ -109,17 +144,18 @@ export default class Map extends Component {
                     latitude: parseFloat(crime.location.latitude),
                     longitude: parseFloat(crime.location.longitude),
                   }}
-                  // image={require("../assets/pin.png")}
+                  image={image}
                 >
                   <Callout tooltip={true} style={styles.textStyle}>
                     <Text>{crime.id.toString()}</Text>
-                    <Text>{crime.category}</Text>
+                    <Text>{`${crime.category} ${categoryEmoji}`}</Text>
                   </Callout>
                   {/* {Platform.OS === "ios" ? (
                     
                   ) : null} */}
                 </Marker>
               );
+            }
           })}
         </MapView>
 
@@ -150,6 +186,6 @@ const styles = StyleSheet.create({
     bottom: 50,
     width: 200,
     borderRadius: 5,
-    padding: 5
+    padding: 5,
   },
 });
