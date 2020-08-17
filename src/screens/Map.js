@@ -13,6 +13,7 @@ import {
   getAllCrimesForLocation,
   getAllCrimesForLocationFullDetails,
 } from "../api";
+import { Tile } from "react-native-elements";
 
 export default class Map extends Component {
   state = {
@@ -109,17 +110,25 @@ export default class Map extends Component {
                     latitude: crime.location.latitude,
                     longitude: crime.location.longitude,
                   }}
+                  title={crime.id}
                   // image={require("../assets/pin.png")}
-                />
+                >
+                  {Platform.OS === "ios" ? (
+                    <Callout tooltip={true} style={styles.callout}>
+                      <Text style={styles.title}>{title}</Text>
+                      <Text style={styles.description}>{description}</Text>
+                    </Callout>
+                  ) : null}
+                </Marker>
               );
           })}
         </MapView>
 
-        <View style={styles.textStyle}>
+        <Tile style={styles.textStyle}>
           <Text>{`lat: ${latitude}`}</Text>
           <Text>{`long: ${longitude}`}</Text>
           <Text>{`crimes within 1 mile: ${numberOfNearbyCrimes}`}</Text>
-        </View>
+        </Tile>
       </View>
     );
   }
