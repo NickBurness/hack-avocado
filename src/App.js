@@ -10,6 +10,7 @@ import Login from "./screens/Login";
 const Stack = createStackNavigator();
 
 function App() {
+  console.disableYellowBox = true;
   return (
     <NavigationContainer>
       <Stack.Navigator>
