@@ -37,6 +37,16 @@ git clone https://github.com/NickBurness/hack-avocado.git
 npm install
 ```
 
+3. Firebase is used in this app, you will need to provide your a Firebase configuration object. Add a file called `secrets.json` to `./hack-avocado/src/firebase/` with the following format:
+
+```js
+{
+  "apiKey": "<YOUR_API_KEY>",
+  "authDomain": "<YOUR_AUTH_DOMAIN>",
+  "projectId": "<YOUR_PROJECT_ID>"
+}
+```
+
 ## Run the application on a device
 
 1. Install the Expo client app on your [iOS](https://apps.apple.com/gb/app/expo-client/id982107779) or [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_GB) device and connect to the same wireless network as your computer.
