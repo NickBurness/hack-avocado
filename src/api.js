@@ -9,3 +9,16 @@ export const getAllCrimesForLocation = async (latitude, longitude) => {
   const numberOfCrimes = data.length;
   return numberOfCrimes;
 };
+
+// Gets all crimes within 1 mile of location - full details
+export const getAllCrimesForLocationFullDetails = async (
+  latitude,
+  longitude
+) => {
+  console.log(latitude, longitude, "HELLO HERE");
+  const response = await fetch(
+    `${baseUrl}/crimes-street/all-crime?lat=${latitude}&lng=${longitude}`
+  );
+  const data = await response.json();
+  return data;
+};

@@ -1,14 +1,17 @@
 import React, { Component } from "react";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import {
   StyleSheet,
   View,
   Dimensions,
   Text,
   PermissionsAndroid,
-  Alert,
+  Platform,
 } from "react-native";
-import { getAllCrimesForLocation } from "../api";
+import {
+  getAllCrimesForLocation,
+  getAllCrimesForLocationFullDetails,
+} from "../api";
 
 export default class Map extends Component {
   state = {
@@ -19,10 +22,11 @@ export default class Map extends Component {
       longitudeDelta: 0,
     },
     numberOfNearbyCrimes: 0,
+    crimes: [],
   };
 
-  componentDidMount = () => {
-    this.getCurrentPosition();
+  componentDidMount = async () => {
+    await this.getCurrentPosition();
     this.getNumberOfCrimes();
   };
 
@@ -32,7 +36,7 @@ export default class Map extends Component {
     }
   };
 
-  getCurrentPosition = () => {
+  getCurrentPosition = async () => {
     navigator.geolocation.getCurrentPosition((position) => {
       const { coords } = position;
       const { latitude, longitude, latitudeDelta, longitudeDelta } = coords;
@@ -42,12 +46,21 @@ export default class Map extends Component {
         latitudeDelta: 0.08,
         longitudeDelta: 0.08,
       };
-      this.setState({ location });
+      this.setState({ location }, this.getDetailedCrimes);
+    });
+  };
+
+  getDetailedCrimes = () => {
+    getAllCrimesForLocationFullDetails(
+      this.state.location.latitude,
+      this.state.location.longitude
+    ).then((data) => {
+      this.setState({ crimes: data });
     });
   };
 
   onRegionChange = (location) => {
-    this.setState({ location });
+    this.setState({ location }, this.getDetailedCrimes);
     this.getNumberOfCrimes();
   };
 
@@ -73,17 +86,34 @@ export default class Map extends Component {
           initialRegion={location}
           // region={location}
           onMapReady={() => {
-            PermissionsAndroid.request(
-              "android.permission.ACCESS_FINE_LOCATION"
-            ).then((granted) => {
-              // Alert.alert(granted);
-            });
+            if (Platform.OS === "android") {
+              PermissionsAndroid.request(
+                "android.permission.ACCESS_FINE_LOCATION"
+              ).then((granted) => {
+                // Alert.alert(granted);
+              });
+            }
           }}
           zoomEnabled={true}
           zoomControlEnabled={true}
           showsUserLocation={true}
           followsUserLocation={true}
-        />
+        >
+          {this.state.crimes.map((crime) => {
+            if (crime)
+              return (
+                <Marker
+                  key={crime.id}
+                  coordinate={{
+                    latitude: crime.location.latitude,
+                    longitude: crime.location.longitude,
+                  }}
+                  // image={require("../assets/pin.png")}
+                />
+              );
+          })}
+        </MapView>
+
         <View style={styles.textStyle}>
           <Text>{`lat: ${latitude}`}</Text>
           <Text>{`long: ${longitude}`}</Text>
