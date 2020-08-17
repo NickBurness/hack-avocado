@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import MapView from "react-native-maps";
-import { StyleSheet, View, Dimensions, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Text,
+  PermissionsAndroid,
+  Alert,
+} from "react-native";
 import { getAllCrimesForLocation } from "../api";
 
 export default class Map extends Component {
@@ -8,20 +15,40 @@ export default class Map extends Component {
     location: {
       latitude: 0,
       longitude: 0,
+      latitudeDelta: 0,
+      longitudeDelta: 0,
     },
     numberOfNearbyCrimes: 0,
+  };
+
+  componentDidMount = () => {
+    this.getCurrentPosition();
+    this.getNumberOfCrimes();
+  };
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (prevState.location !== this.state.location) {
+      this.getNumberOfCrimes();
+    }
   };
 
   getCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       const { coords } = position;
-      const { latitude, longitude } = coords;
+      const { latitude, longitude, latitudeDelta, longitudeDelta } = coords;
       const location = {
         latitude: latitude,
         longitude: longitude,
+        latitudeDelta: 0.08,
+        longitudeDelta: 0.08,
       };
       this.setState({ location });
     });
+  };
+
+  onRegionChange = (location) => {
+    this.setState({ location });
+    this.getNumberOfCrimes();
   };
 
   getNumberOfCrimes = async () => {
@@ -41,10 +68,19 @@ export default class Map extends Component {
       <View style={styles.container}>
         <MapView
           style={styles.mapStyle}
-          onUserLocationChange={() => {
-            this.getCurrentPosition();
-            this.getNumberOfCrimes();
+          // onUserLocationChange={this.getNumberOfCrimes}
+          onRegionChangeComplete={this.onRegionChange}
+          initialRegion={location}
+          // region={location}
+          onMapReady={() => {
+            PermissionsAndroid.request(
+              "android.permission.ACCESS_FINE_LOCATION"
+            ).then((granted) => {
+              // Alert.alert(granted);
+            });
           }}
+          zoomEnabled={true}
+          zoomControlEnabled={true}
           showsUserLocation={true}
           followsUserLocation={true}
         />
