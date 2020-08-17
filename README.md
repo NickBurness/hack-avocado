@@ -43,7 +43,8 @@ npm install
 {
   "apiKey": "<YOUR_API_KEY>",
   "authDomain": "<YOUR_AUTH_DOMAIN>",
-  "projectId": "<YOUR_PROJECT_ID>"
+  "projectId": "<YOUR_PROJECT_ID>",
+  "databaseUrl": "<YOUR_DATABASE_URL_HERE>"
 }
 ```
 
