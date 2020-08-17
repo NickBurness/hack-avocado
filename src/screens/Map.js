@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import MapView from "react-native-map-clustering";
-import { Marker } from "react-native-maps";
+import { Marker, Callout } from "react-native-maps";
 import {
   StyleSheet,
   View,
@@ -13,7 +13,6 @@ import {
   getAllCrimesForLocation,
   getAllCrimesForLocationFullDetails,
 } from "../api";
-import { Tile } from "react-native-elements";
 
 export default class Map extends Component {
   state = {
@@ -107,28 +106,28 @@ export default class Map extends Component {
                 <Marker
                   key={crime.id}
                   coordinate={{
-                    latitude: crime.location.latitude,
-                    longitude: crime.location.longitude,
+                    latitude: parseFloat(crime.location.latitude),
+                    longitude: parseFloat(crime.location.longitude),
                   }}
-                  title={crime.id}
                   // image={require("../assets/pin.png")}
                 >
-                  {Platform.OS === "ios" ? (
-                    <Callout tooltip={true} style={styles.callout}>
-                      <Text style={styles.title}>{title}</Text>
-                      <Text style={styles.description}>{description}</Text>
-                    </Callout>
-                  ) : null}
+                  <Callout tooltip={true} style={styles.callout}>
+                    <Text>{crime.id.toString()}</Text>
+                    <Text>{crime.category}</Text>
+                  </Callout>
+                  {/* {Platform.OS === "ios" ? (
+                    
+                  ) : null} */}
                 </Marker>
               );
           })}
         </MapView>
 
-        <Tile style={styles.textStyle}>
+        <View style={styles.textStyle}>
           <Text>{`lat: ${latitude}`}</Text>
           <Text>{`long: ${longitude}`}</Text>
           <Text>{`crimes within 1 mile: ${numberOfNearbyCrimes}`}</Text>
-        </Tile>
+        </View>
       </View>
     );
   }
@@ -147,8 +146,9 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     position: "absolute",
-    backgroundColor: "red",
-    top: 50,
+    backgroundColor: "white",
+    bottom: 50,
     width: 200,
+    borderRadius: 5,
   },
 });
