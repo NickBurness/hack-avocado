@@ -111,7 +111,7 @@ export default class Map extends Component {
                   }}
                   // image={require("../assets/pin.png")}
                 >
-                  <Callout tooltip={true} style={styles.callout}>
+                  <Callout tooltip={true} style={styles.textStyle}>
                     <Text>{crime.id.toString()}</Text>
                     <Text>{crime.category}</Text>
                   </Callout>
@@ -150,5 +150,6 @@ const styles = StyleSheet.create({
     bottom: 50,
     width: 200,
     borderRadius: 5,
+    padding: 5
   },
 });
