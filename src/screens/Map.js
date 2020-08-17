@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView from "react-native-map-clustering";
+import { Marker } from "react-native-maps";
 import {
   StyleSheet,
   View,

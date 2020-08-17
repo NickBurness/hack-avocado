@@ -15,7 +15,6 @@ export const getAllCrimesForLocationFullDetails = async (
   latitude,
   longitude
 ) => {
-  console.log(latitude, longitude, "HELLO HERE");
   const response = await fetch(
     `${baseUrl}/crimes-street/all-crime?lat=${latitude}&lng=${longitude}`
   );
